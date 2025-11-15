@@ -18,53 +18,32 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Derive version from ref
-        id: derive
+      - name: Set version from tag (v*/test* -> X.Y.Z)
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
         run: |
-          REF_NAME="${GITHUB_REF_NAME}"
-          echo "REF_NAME=$REF_NAME"
-          if [[ "$REF_NAME" == test* ]]; then
-            VERSION="${REF_NAME#test}"
-          elif [[ "$REF_NAME" == v* ]]; then
-            VERSION="${REF_NAME#v}"
+          set -eux
+          VERSION="${GITHUB_REF_NAME}"
+          if [[ "$VERSION" == v* ]]; then
+            VERSION="${VERSION#v}"
+          elif [[ "$VERSION" == test* ]]; then
+            VERSION="${VERSION#test}"
           else
-            echo "Ref does not start with test or v; skipping version bump" && exit 0
+            echo "Tag must start with v or test" && exit 1
           fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Derived version: $VERSION"
-
-      - name: Bump version in files
-        if: env.VERSION != ''
-        run: |
-          python - <<'PY'
-          import os, re, pathlib
-          version = os.environ.get('VERSION')
-          if not version:
-              raise SystemExit('No VERSION in env')
-          p = pathlib.Path('pyproject.toml')
-          s = p.read_text(encoding='utf-8')
-          s2 = re.sub(r'(?m)^(version\s*=\s*")[^"]+("\s*)$', lambda m: m.group(1) + version + m.group(2), s)
-          if s == s2:
-              print('pyproject.toml: version unchanged or not found line, writing anyway')
-          p.write_text(s2, encoding='utf-8')
-          p2 = pathlib.Path('POS2SSG/__init__.py')
-          if p2.exists():
-              t = p2.read_text(encoding='utf-8')
-              t2 = re.sub(r'(?m)^__version__\s*=\s*\"[^\"]+\"', f'__version__ = "{version}"', t)
-              p2.write_text(t2, encoding='utf-8')
-              print('Updated POS2SSG/__init__.py to', version)
-          else:
-              print('POS2SSG/__init__.py not found; skipping')
-          print('Set version to', version)
-          PY
-
+          test -n "$VERSION"
+          echo "Using VERSION=$VERSION"
+          sed -i -E "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+          if [ -f POS2SSG/__init__.py ]; then
+            sed -i -E "s/^__version__ = \".*\"/__version__ = \"$VERSION\"/" POS2SSG/__init__.py || true
+          fi
       - name: Build sdist and wheel
         run: |
           python -m pip install --upgrade pip build
           python -m build
 
       - name: Publish to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@v1.10.2
         with:
           repository-url: https://test.pypi.org/legacy/
           user: ${{ secrets.TEST_PYPI_USERNAME }}
