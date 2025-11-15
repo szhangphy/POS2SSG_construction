@@ -64,4 +64,5 @@ jobs:
           password: ${{ secrets.PYPI_PASSWORD }}
           attestations: false
           packages-dir: dist
+          verify-metadata: false
           skip-existing: true
