@@ -43,7 +43,7 @@ jobs:
               raise SystemExit('No VERSION in env')
           p = pathlib.Path('pyproject.toml')
           s = p.read_text(encoding='utf-8')
-          s2 = re.sub(r'(?m)^(version\s*=\s*")[^"]+("\s*)$', fr'\1{version}\2', s)
+          s2 = re.sub(r'(?m)^(version\s*=\s*")[^"]+("\s*)$', lambda m: m.group(1) + version + m.group(2), s)
           if s == s2:
               print('pyproject.toml: version unchanged or not found line, writing anyway')
           p.write_text(s2, encoding='utf-8')
