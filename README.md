@@ -13,23 +13,6 @@ POS2SSG is a Python package that analyzes crystal structures and generates magne
 - **VASP Integration**: Works seamlessly with VASP POSCAR files
 - **Flexible Output**: Generate SPOSCAR files with magnetic moments
 
-## Installation
-
-### From Source
-
-```bash
-# Clone the repository
-git clone https://github.com/mom2ssg/pos2ssg.git
-cd pos2ssg
-
-# Install in development mode
-pip install -e .
-
-# Or build and install wheel
-python -m build
-pip install dist/pos2ssg-1.0.0-py3-none-any.whl
-```
-
 ### Dependencies
 
 - Python >= 3.8
@@ -37,6 +20,22 @@ pip install dist/pos2ssg-1.0.0-py3-none-any.whl
 - scipy >= 1.7.0
 - pymatgen >= 2022.0.0
 - spglib >= 1.16.0
+- irssg >= 1.0.1
+
+## Installation
+
+Install from PyPI (recommended):
+
+```bash
+pip install pos2ssg
+```
+
+Install from source (editable for development):
+
+```bash
+cd POS2SSG
+pip install -e .
+```
 
 ## Usage
 
@@ -65,23 +64,6 @@ pos2ssg -c POSCAR -ssg 43.2.4.1.P --verbose
 pos2ssg -c POSCAR -ssg 43.2.4.1.P --tolerance 1e-3
 ```
 
-### Python API
-
-```python
-from POS2SSG.POS2SSG import main
-from POS2SSG.mag_atom import construct_magmom_dict
-from POS2SSG.poscar_io import read_poscar, write_poscar
-
-# Read structure
-cell = read_poscar('POSCAR')
-
-# Set up magnetic moments
-magmom_dict = construct_magmom_dict(['Fe', 'Cu'], [3.0, 2.0])
-
-# Generate SSG structure
-# ... (use the internal functions)
-```
-
 ## Command Line Options
 
 - `-c, --poscar`: Input POSCAR file (default: POSCAR)
@@ -92,8 +74,6 @@ magmom_dict = construct_magmom_dict(['Fe', 'Cu'], [3.0, 2.0])
 - `--magmom`: List of magnetic moments (e.g., 3.0 2.0)
 - `--output, -o`: Output file name (default: SPOSCAR)
 - `--verbose, -v`: Enable verbose output
-
-## Examples
 
 ### Basic Usage
 
@@ -142,20 +122,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Citation
-
-If you use POS2SSG in your research, please cite:
-
-```bibtex
-@software{pos2ssg2024,
-  title={POS2SSG: Convert POSCAR to Spin Space Group with Magnetic Moments},
-  author={MOM2SSG Team},
-  year={2024},
-  url={https://github.com/mom2ssg/pos2ssg}
-}
-```
 
 ## Support
 
 For questions and support, please open an issue on GitHub or contact the development team.
-# POS2SSG_construction

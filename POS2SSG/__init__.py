@@ -7,7 +7,7 @@ magnetic configurations corresponding to specific spin space groups (SSG).
 
 __version__ = "1.0.1"
 __author__ = "irssg Team"
-__email__ = "zhangsheng221@mails.ucas.ac.cn, songziyin@iphy.ac.cn"
+__email__ = "songziyin@iphy.ac.cn, zhangsheng221@mails.ucas.ac.cn, wzj@iphy.ac.cn"
 
 from .POS2SSG import main
 from .mag_atom import construct_magmom_dict, ELEMENT_TABLE, analyze_magnetic_atoms
